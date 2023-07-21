@@ -4,13 +4,13 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="school-math",
+    name="geometria",
     version="0.0.1",
     author="Mayumi Shingaki",
-    description="Lib for school math formulas",
+    description="Biblioteca para formulas de geometria",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(incllude=["geometria"]),
+    packages=find_packages(include=["geometria"]),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
