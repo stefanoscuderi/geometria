@@ -1,4 +1,4 @@
 wheel
 setuptools
 twine
-pytest==4.4.1
+pytest
