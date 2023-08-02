@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="geometria",
-    version="0.0.1",
+    version="0.2",
     author="Mayumi Shingaki",
     description="Biblioteca para formulas de geometria",
     long_description=long_description,
