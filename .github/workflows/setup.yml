@@ -1,2 +1,2 @@
-- name: Setup Go environment
-  uses: actions/setup-go@v4.0.1
+- name: pypi-publish
+  uses: pypa/gh-action-pypi-publish@v1.8.8
