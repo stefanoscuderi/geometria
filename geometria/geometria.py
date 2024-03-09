@@ -52,5 +52,4 @@ def area_retangulo(base, altura):
         return "Digite um valor de entrada valido"
     return base * altura
 
-if __name__ == '__main__':
-    print(area_triangulo_equilatero(12))
+
