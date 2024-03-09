@@ -18,7 +18,7 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 O status deste job é ${{ job.status }}."
 
-  Job-de-teste:
+  job-de-teste:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,5 +35,7 @@ jobs:
       - name: Mostrando a versão do Python
         run: python -c "import sys; print(sys.version)"
       - name: Teste com Pytest
-        run: pytest test_geometria.py --junitxml=junit/test-results.xml --cov=com
+        run: |
+          pip install pytest pytest-cov
+          pytest test_geometria.py
       - run: echo "🍏 O status deste job é ${{ job.status }}."
