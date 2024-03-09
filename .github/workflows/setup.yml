@@ -37,5 +37,5 @@ jobs:
       - name: Teste com Pytest
         run: |
           pip install pytest pytest-cov
-          pytest test_geometria.py
+          pytest tests/test_geometria.py
       - run: echo "🍏 O status deste job é ${{ job.status }}."
