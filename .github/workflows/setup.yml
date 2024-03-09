@@ -4,7 +4,7 @@ run-name:  🚀
 on: [push]
 
 jobs:
-  Primeiro job :):
+  Primeiro job:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 Este job foi criado por causa do ${{ github.event_name }}."
