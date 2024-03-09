@@ -1,9 +1,9 @@
 name: Meu primeiro workflow
 
-on: [push]
+on: push
 
 jobs:
-  Primeiro job:
+  primeiro-job:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 Este job foi criado por causa do ${{ github.event_name }}."
@@ -18,7 +18,7 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 O status deste job é ${{ job.status }}."
 
-  Job de teste:
+  Job-de-teste:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
