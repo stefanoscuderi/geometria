@@ -1,5 +1,4 @@
 name: Meu primeiro workflow
-run-name:  🚀
 
 on: [push]
 
