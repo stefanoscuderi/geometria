@@ -8,7 +8,7 @@ from geometria.geometria import area_triangulo, area_triangulo_equilatero
 class test_area_triangulo(TestCase):
 
     def test_triangulo_com_entrada_valida(self):
-        assert area_triangulo(10, 20) == 100
+        assert area_triangulo(10, 20) == 10
         assert area_triangulo(7, 7) == 24.5
         assert area_triangulo(sqrt(5), 8) == 8.94
 
