@@ -1,0 +1,39 @@
+name: 1 - Workflow para Dev  # Nome do workflow para desenvolvimento
+
+on:
+  push:  # Aciona o workflow em caso de push
+    branches:  # Define as branches que acionam o workflow
+      - 'feature/**'  # O workflow é executado em qualquer branch, exceto a branch protegida
+
+jobs:
+  run-tests:  # Definição do job que vai rodar os testes
+    runs-on: ubuntu-latest  # Define o ambiente para execução (Ubuntu)
+
+    steps:
+      - name: Checkout do repositório  # Passo para fazer checkout do repositório
+        uses: actions/checkout@v3  # Usa a ação padrão para fazer checkout do código
+
+      - name: Configurar o Python  # Passo para configurar a versão do Python
+        uses: actions/setup-python@v4  # Usa a ação para configurar o Python
+        with:
+          python-version: '3.9'  # Define a versão do Python a ser usada
+
+      - name: Instalar dependências  # Passo para instalar dependências do projeto
+        run: |  # Executa os comandos abaixo em um shell
+          python -m pip install --upgrade pip  # Atualiza o pip
+          pip install -r requirements.txt  # Instala as dependências listadas no requirements.txt
+
+      - name: Rodar testes unitários  # Passo para rodar os testes
+        run: |  # Executa os comandos abaixo em um shell
+          pytest tests/test_geometria.py  # Executa os testes unitários com pytest
+
+      - name: Verificar Branch  # Passo para verificar a branch atual
+        run: |  # Executa os comandos abaixo em um shell
+          echo "Branch atual: ${GITHUB_REF}"  # Mostra a branch atual nos logs
+
+      - name: Criar Pull Request  # Passo para criar uma Pull Request automaticamente
+        if: github.ref != 'refs/heads/develop'  # Executa apenas se a branch não for develop
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --base develop --head ${{ github.ref }} --title "Feature: ${{ github.ref_name }}" --body "$(cat .github/pull_request_template.md)"
