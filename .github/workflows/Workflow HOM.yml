@@ -1,37 +1,37 @@
-name: 2 - Workflow para Hom  # Nome do workflow para homologação
+name: 2 - Workflow para Homologação  # Nome do workflow para homologação
 
 on:
   push:  # Aciona o workflow em caso de push
-    branches:  # Define as branches que acionam o workflow
-      - develop  # O workflow é executado quando há um push na branch develop
+    branches:
+      - develop  # O workflow é executado apenas na branch develop
 
 jobs:
-  run-tests:  # Definição do job que vai rodar os testes
+  release:  # Definição do job para criar uma nova release
     runs-on: ubuntu-latest  # Define o ambiente para execução (Ubuntu)
 
     steps:
       - name: Checkout do repositório  # Passo para fazer checkout do repositório
         uses: actions/checkout@v3  # Usa a ação padrão para fazer checkout do código
 
-      - name: Configurar o Python  # Passo para configurar a versão do Python
-        uses: actions/setup-python@v4  # Usa a ação para configurar o Python
-        with:
-          python-version: '3.9'  # Define a versão do Python a ser usada
-
-      - name: Instalar dependências  # Passo para instalar dependências do projeto
+      - name: Configurar Identidade do Git  # Configura a identidade do Git
         run: |  # Executa os comandos abaixo em um shell
-          python -m pip install --upgrade pip  # Atualiza o pip
-          pip install -r requirements.txt  # Instala as dependências listadas no requirements.txt
+          git config --global user.email "seu-email@example.com"  # Configure seu e-mail aqui
+          git config --global user.name "Seu Nome"  # Configure seu nome aqui
 
-      - name: Rodar testes unitários  # Passo para rodar os testes
-        run: |  # Executa os comandos abaixo em um shell
-          pytest tests/test_geometria.py  # Executa os testes unitários com pytest
-
-      - name: Criar nova versão  # Passo para criar uma nova versão
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Usa o token de autenticação do GitHub
+      - name: Obter a última release  # Obtém a última tag de release
         run: |  # Executa os comandos abaixo em um shell
           last_release=$(git tag | sort -V | tail -n 1)  # Obtém a última tag de release
-          version_number=$(( $(echo "${last_release}" | sed 's/release-//') + 1 ))  # Incrementa o número da versão
-          git checkout -b release-"$version_number"  # Cria uma nova branch chamada release-X (X é o número da versão)
-          git push origin release-"$version_number"  # Faz push da nova branch para o repositório remoto
+          echo "Última release: $last_release"  # Mostra a última release nos logs
+
+      - name: Criar nova branch de release  # Cria uma nova branch de release
+        run: |  # Executa os comandos abaixo em um shell
+          new_release=$(echo "$last_release" | awk -F. -v OFS=. '{$NF++; print}')  # Incrementa a última tag
+          git checkout -b "release-$new_release"  # Cria a nova branch de release
+
+      - name: Puxar atualizações remotas  # Puxa atualizações da branch remota
+        run: |  # Executa os comandos abaixo em um shell
+          git pull origin "release-$new_release" || echo "Não há novas alterações para puxar."  # Puxa as alterações da branch de release
+
+      - name: Fazer push da nova branch  # Faz push da nova branch de release
+        run: |  # Executa os comandos abaixo em um shell
+          git push origin "release-$new_release"  # Faz push da nova branch de release
