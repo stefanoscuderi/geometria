@@ -7,7 +7,7 @@ Descreva o problema que este PR está resolvendo.
 
 # :white_check_mark: Solução
 
-Descreva a solução proposta.
+Descreva a solução proposta.  
 
 - _Como esse PR resolve o problema?_
 - _Como o código foi melhorado?_
