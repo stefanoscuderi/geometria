@@ -3,7 +3,7 @@ name: 1 - Workflow para Dev  # Nome do workflow para desenvolvimento
 on:
   push:  # Aciona o workflow em caso de push
     branches:  # Define as branches que acionam o workflow
-      - '*'  # O workflow é executado em qualquer branch, exceto a branch protegida
+      - 'feature/**'  # O workflow é executado em qualquer branch, exceto a branch protegida
 
 jobs:
   run-tests:  # Definição do job que vai rodar os testes
