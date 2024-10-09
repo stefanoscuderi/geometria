@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout do repositório
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # Certifique-se de que o repositório seja clonado
 
       - name: Configurar o Python
         uses: actions/setup-python@v4
@@ -30,13 +30,15 @@ jobs:
   create-release-branch:
     runs-on: ubuntu-latest
     needs: run-tests
-    if: success()  
+    if: success()  # Só cria a branch de release se os testes passarem
 
     steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v3  # Checkout necessário aqui também para garantir que o repositório esteja disponível
+
       - name: Obter número da versão atual
         id: get-version
         run: |
-          # Extrair o número da versão mais recente do histórico de releases
           version=$(git tag --list 'release-*' | sort -V | tail -n 1 | sed 's/release-//')
           if [ -z "$version" ]; then
             version=0
