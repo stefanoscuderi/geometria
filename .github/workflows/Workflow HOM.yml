@@ -33,20 +33,23 @@ jobs:
     if: success()  # Só cria a branch de release se os testes passarem
 
     steps:
+      - name: Checkout do repositório  # Clona o repositório novamente
+        uses: actions/checkout@v3
+
       - name: Obter número da versão atual
         id: get-version
         run: |
-          # Extrair o número da versão mais recente do histórico de releases
-          version=$(git tag --list 'release-*' | sort -V | tail -n 1 | sed 's/release-//')
+          git fetch --tags  # Faz fetch das tags do repositório remoto
+          version=$(git tag --list 'release-*' | sort -V | tail -n 1 | sed 's/release-//')  # Extrai a última versão
           if [ -z "$version" ]; then
-            version=0
+            version=0  # Se não houver versão, inicia com 0
           fi
-          new_version=$((version + 1))
-          echo "::set-output name=new_version::release-${new_version}"
+          new_version=$((version + 1))  # Incrementa a versão
+          echo "new_version=release-${new_version}" >> $GITHUB_ENV  # Define a nova versão como variável de ambiente
 
       - name: Criar nova branch de release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git checkout -b ${{ steps.get-version.outputs.new_version }}
-          git push origin ${{ steps.get-version.outputs.new_version }}
+          git checkout -b ${{ env.new_version }}  # Cria uma nova branch com a nova versão
+          git push origin ${{ env.new_version }}  # Faz push da nova branch de release
