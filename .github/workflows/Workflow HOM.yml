@@ -3,7 +3,7 @@ name: Create PR for Homologation
 on:
   push:
     branches:
-      - dev
+      - develop
 
 jobs:
   create-hom-pr:
@@ -17,4 +17,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create --base hom --head dev --title "Merge to Homologation: Dev Branch" --body "$(cat .github/pull_request_template.md)"
+          gh pr create --base hom --head develop --title "Merge to Homologation: Dev Branch" --body "$(cat .github/pull_request_template.md)"
