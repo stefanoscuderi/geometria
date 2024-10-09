@@ -1,0 +1,20 @@
+name: Create PR for Dev
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+
+jobs:
+  create-dev-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v3
+
+      - name: Criar PR automática para Dev
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --base develop --head ${{ github.ref }} --title "Feature: ${{ github.ref_name }}" --body "$(cat .github/pull_request_template.md)"
