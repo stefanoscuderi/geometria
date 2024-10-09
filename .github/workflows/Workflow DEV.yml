@@ -34,19 +34,6 @@ jobs:
       - name: Criar Pull Request  # Passo para criar uma Pull Request automaticamente
         if: github.ref != 'refs/heads/develop'  # Executa apenas se a branch não for develop
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Usa o token de autenticação do GitHub
-        run: |  # Executa os comandos abaixo em um shell
-          branch_name="${GITHUB_REF##*/}"  # Obtém o nome da branch atual
-          git add .  # Adiciona todas as alterações 
-          git commit -m "${{ github.event.head_commit.message }}"  # Usa a mensagem do commit atual
-          
-          # Cria a Pull Request com o título e corpo
-          title="Feature: $branch_name"  # Define o título da Pull Request
-          body="${{ github.event.head_commit.message }}"  # Usa a mensagem do commit como corpo
-          
-          if [ -z "$body" ]; then  # Se o corpo estiver vazio, defina um corpo padrão
-            body="Implementa mudanças na branch $branch_name"
-          fi
-
-          echo "Criando Pull Request para a branch 'develop'"  # Mensagem de log
-          gh pr create --base develop --head "$branch_name" --title "$title" --body "$body"  # Cria a Pull Request para a branch develop
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --base develop --head ${{ github.ref }} --title "Feature: ${{ github.ref_name }}" --body "$(cat .github/pull_request_template.md)"
