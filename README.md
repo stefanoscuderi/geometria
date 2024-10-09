@@ -7,3 +7,4 @@ Para execução dos testes unitários, execute na pasta raíz:
 
 if __name__ == '__main__':
     print(area_triangulo_equilatero(12))
+    
