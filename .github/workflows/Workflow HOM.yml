@@ -3,58 +3,46 @@ name: 2 - Workflow para Hom  # Nome do workflow para homologação
 on:
   push:
     branches:
-      - develop  # O workflow é executado apenas na branch 'develop'
+      - develop  # O workflow é acionado apenas na branch 'develop'
 
 jobs:
   run-tests:  # Job para executar os testes
-    runs-on: ubuntu-latest  # Define o ambiente para execução (Ubuntu)
+    runs-on: ubuntu-latest  # Define o ambiente para execução
 
     steps:
-      - name: Checkout do repositório  # Passo para fazer checkout do repositório
-        uses: actions/checkout@v3  # Usa a ação padrão para fazer checkout do código
+      - name: Checkout do repositório  # Clona o repositório
+        uses: actions/checkout@v3
 
-      - name: Configurar o Python  # Passo para configurar a versão do Python
+      - name: Configurar o Python  # Configura a versão do Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.9'  # Define a versão do Python
 
-      - name: Instalar dependências  # Passo para instalar as dependências do projeto
-        run: |  # Executa os comandos abaixo em um shell
+      - name: Instalar dependências  # Instala as dependências do projeto
+        run: |
           python -m pip install --upgrade pip  # Atualiza o pip
           pip install -r requirements.txt  # Instala as dependências
 
-      - name: Rodar testes unitários  # Passo para rodar os testes unitários
+      - name: Rodar testes unitários  # Executa os testes
         run: |
-          pytest tests/test_geometria.py  # Executa os testes
+          pytest tests/test_geometria.py
 
   create-release-branch:  # Job para criar uma nova branch de release
-    runs-on: ubuntu-latest  # Define o ambiente para execução (Ubuntu)
+    runs-on: ubuntu-latest  # Define o ambiente para execução
     needs: run-tests  # Este job depende que o job 'run-tests' tenha sido concluído com sucesso
-    if: success()  # Somente cria a branch de release se os testes passarem
 
     steps:
-      - name: Checkout do repositório  # Passo para fazer checkout do repositório novamente
-        uses: actions/checkout@v3  # Necessário para garantir que o repositório esteja disponível
+      - name: Checkout do repositório  # Clona o repositório novamente
+        uses: actions/checkout@v3
 
-      - name: Obter número da versão atual  # Passo para obter a versão atual da release
-        id: get-version  # Atribui um ID a este passo para referenciá-lo posteriormente
-        run: |
-          version=$(git tag --list 'release-*' | sort -V | tail -n 1 | sed 's/release-//')  # Obtém a última tag de release
-          if [ -z "$version" ]; then
-            version=0  # Inicia a contagem a partir de 0 se não houver versões
-          fi
-          new_version=$((version + 1))  # Incrementa o número da versão
-          echo "::set-output name=new_version::release-${new_version}"  # Define a nova versão
-
-      - name: Atualizar branch remota antes de criar nova branch de release  # Passo para garantir que a branch local está atualizada
-        run: |
-          git fetch origin  # Obtém as informações mais recentes do repositório remoto
-          git checkout develop  # Certifique-se de estar na branch develop
-          git pull origin develop  # Atualiza a branch develop local com as alterações remotas
-
-      - name: Criar nova branch de release  # Passo para criar uma nova branch de release
+      - name: Criar nova branch de release  # Cria uma nova branch de release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Usa o token de autenticação do GitHub
         run: |
-          git checkout -b ${{ steps.get-version.outputs.new_version }}  # Cria uma nova branch com o nome da nova versão
-          git push origin ${{ steps.get-version.outputs.new_version }}  # Faz push da nova branch para o repositório remoto
+          # Obtém a última tag de release e incrementa o número
+          version=$(git tag --list 'release-*' | sort -V | tail -n 1 | sed 's/release-//')
+          new_version=$((version + 1))
+          branch_name="release-${new_version}"  # Nome da nova branch
+
+          git checkout -b "$branch_name"  # Cria a nova branch
+          git push --set-upstream origin "$branch_name"  # Faz push da nova branch
