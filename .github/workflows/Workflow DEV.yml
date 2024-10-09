@@ -1,20 +1,37 @@
-name: Create PR for Dev
+name: 1 - Workflow para Dev  # Nome do workflow para desenvolvimento
 
 on:
-  push:
-    branches:
-      - 'feature/**'
+  push:  # Aciona o workflow em caso de push
+    branches:  # Define as branches que acionam o workflow
+      - '*'  # O workflow é executado em qualquer branch
 
 jobs:
-  create-dev-pr:
-    runs-on: ubuntu-latest
+  run-tests:  # Definição do job que vai rodar os testes
+    runs-on: ubuntu-latest  # Define o ambiente para execução (Ubuntu)
 
     steps:
-      - name: Checkout do repositório
-        uses: actions/checkout@v3
+      - name: Checkout do repositório  # Passo para fazer checkout do repositório
+        uses: actions/checkout@v3  # Usa a ação padrão para fazer checkout do código
 
-      - name: Criar PR automática para Dev
+      - name: Configurar o Python  # Passo para configurar a versão do Python
+        uses: actions/setup-python@v4  # Usa a ação para configurar o Python
+        with:
+          python-version: '3.9'  # Define a versão do Python a ser usada
+
+      - name: Instalar dependências  # Passo para instalar dependências do projeto
+        run: |  # Executa os comandos abaixo em um shell
+          python -m pip install --upgrade pip  # Atualiza o pip
+          pip install -r requirements.txt  # Instala as dependências listadas no requirements.txt
+
+      - name: Rodar testes unitários  # Passo para rodar os testes
+        run: |  # Executa os comandos abaixo em um shell
+          pytest tests/test_geometria.py  # Executa os testes unitários com pytest
+          
+      - name: Criar Pull Request  # Passo para criar uma Pull Request automaticamente
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr create --base develop --head ${{ github.ref }} --title "Feature: ${{ github.ref_name }}" --body "$(cat .github/pull_request_template.md)"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Usa o token de autenticação do GitHub
+        run: |  # Executa os comandos abaixo em um shell
+          branch_name=$(echo "${GITHUB_REF}" | awk -F'/' '{print $3}')  # Obtém o nome da branch atual
+          git checkout -b feature/"$branch_name"  # Cria uma nova branch de feature com base no nome da branch atual
+          git add .  # Adiciona todas as alterações
+          gh pr create --base develop --head feature/"$branch_name" --title "Feature: $branch_name" # Cria a Pull Request para a branch develop
