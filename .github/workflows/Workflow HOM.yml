@@ -40,8 +40,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Usa o token de autenticação do GitHub
         run: |
           # Obtém a última tag de release e incrementa o número
-          version=$(git tag --list 'release-*' | sort -V | tail -n 1 | sed 's/release-//')
-          new_version=$((version + 1))
+          version=$(git tag --list 'release-*' | sort -V | tail -n 1 | sed 's/release-//') || true  # Adiciona || true para evitar erro se não houver tag
+          new_version=$((version + 1))  # Incrementa a versão
           branch_name="release-${new_version}"  # Nome da nova branch
 
           git checkout -b "$branch_name"  # Cria a nova branch
