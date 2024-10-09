@@ -26,7 +26,11 @@ jobs:
       - name: Rodar testes unitários  # Passo para rodar os testes
         run: |  # Executa os comandos abaixo em um shell
           pytest tests/test_geometria.py  # Executa os testes unitários com pytest
-          
+
+      - name: Verificar Branch  # Passo para verificar a branch atual
+        run: |  # Executa os comandos abaixo em um shell
+          echo "Branch atual: ${GITHUB_REF}"  # Mostra a branch atual nos logs
+
       - name: Criar Pull Request  # Passo para criar uma Pull Request automaticamente
         if: github.ref != 'refs/heads/develop'  # Executa apenas se a branch não for develop
         env:
@@ -35,4 +39,5 @@ jobs:
           branch_name="${GITHUB_REF##*/}"  # Obtém o nome da branch atual
           git add .  # Adiciona todas as alterações 
           git commit -m "${{ github.event.head_commit.message }}"  # Usa a mensagem do commit atual
+          echo "Criando Pull Request para a branch 'develop'"  # Mensagem de log
           gh pr create --base develop --head "$branch_name" --title "Feature: $branch_name" --body "${{ github.event.head_commit.message }}"  # Cria a Pull Request para a branch develop
