@@ -1,12 +1,47 @@
-/.pytest_cache/
-/geometria.egg-info/
-/geometria_testpypi.egg-info/
-/tests/.pytest_cache/
-/.eggs/
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.env
+*.venv
+*.egg
+*.egg-info/
+.eggs/
+*.log
+
+# Virtual environments
 /venv/
-/htmlcov/
-/.idea/
-*pyc
+/env/
+/.virtualenv/
+
+# Build artifacts
 build/
 dist/
 *.egg-info/
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# Test-related files
+.pytest_cache/
+/tests/.pytest_cache/
+
+# IDE-specific files
+.idea/
+.vscode/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Git-specific files
+*.orig
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+*.~lock.*
