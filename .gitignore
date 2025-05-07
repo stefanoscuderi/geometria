@@ -1,9 +1,12 @@
-
 /.pytest_cache/
 /geometria.egg-info/
+/geometria_testpypi.egg-info/
 /tests/.pytest_cache/
 /.eggs/
 /venv/
 /htmlcov/
 /.idea/
 *pyc
+build/
+dist/
+*.egg-info/
