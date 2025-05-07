@@ -25,7 +25,7 @@ jobs:
 
       - name: Rodar testes unitários  # Passo para rodar os testes
         run: |  # Executa os comandos abaixo em um shell
-          pytest tests/test_geometria.py  # Executa os testes unitários com pytest
+          pytest tests/  # Executa os testes unitários com pytest
 
       - name: Verificar Branch  # Passo para verificar a branch atual
         run: |  # Executa os comandos abaixo em um shell
