@@ -34,7 +34,7 @@ jobs:
       - name: Checkout do repositório
         uses: actions/checkout@v3
 
-      - name: Gera próxima versão de release baseada em tag
+      - name: Gera próxima versão de release baseada em tag (sem conflitos)
         id: release_name
         run: |
           git fetch --tags
@@ -42,15 +42,11 @@ jobs:
           IFS='.' read -r MAJOR MINOR PATCH <<< "$LAST_TAG"
           PATCH=$((10#$PATCH + 1))
           NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+
+          while git ls-remote --exit-code --heads origin "release/${NEXT_VERSION}" > /dev/null 2>&1; do
+            PATCH=$((PATCH + 1))
+            NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          done
           echo "RELEASE_NAME=release/${NEXT_VERSION}" >> $GITHUB_ENV
           echo "RELEASE_VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
-
-      - name: Criar Pull Request para a branch release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b $RELEASE_NAME
-          git push origin $RELEASE_NAME
-          gh pr create --base main --head $RELEASE_NAME --title "Release $RELEASE_VERSION" --body "Pull Request para a branch de release $RELEASE_VERSION"
+      
