@@ -42,3 +42,4 @@ def condicao_existencia_triangulo(ladoA, ladoB, ladoC):
             ladoB + ladoC > ladoA,
         ]
     )
+
