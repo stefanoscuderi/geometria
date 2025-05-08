@@ -1,3 +1,6 @@
+- name: Setup Python
+  uses: actions/setup-python@v5.6.0
+
 name: 1 - Workflow para Dev  # Nome do workflow para desenvolvimento
 
 on:
