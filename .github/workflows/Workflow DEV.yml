@@ -29,7 +29,7 @@ jobs:
           
   Cria-PR-automatico: # Job para criar Pull Request de release
     runs-on: ubuntu-latest
-    needs: run-tests
+    needs: Meu-job
     if: success() # Executa apenas se o job anterior for bem-sucedido
     steps:
       - name: Checkout do repositório
