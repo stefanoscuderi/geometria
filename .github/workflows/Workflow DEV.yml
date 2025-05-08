@@ -37,3 +37,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr create --base develop --head ${{ github.ref }} --title "Feature: ${{ github.ref_name }}" --body "$(cat .github/pull_request_template.md)"
+
+      - name: "TODO to Issue"
+        uses: "alstr/todo-to-issue-action@v5"
+        with:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
