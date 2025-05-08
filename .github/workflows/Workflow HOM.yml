@@ -38,6 +38,7 @@ jobs:
         id: release_name
         run: |
           git fetch --tags
+
           LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "0.0.0")
           IFS='.' read -r MAJOR MINOR PATCH <<< "$LAST_TAG"
           PATCH=$((10#$PATCH + 1))
@@ -47,6 +48,12 @@ jobs:
             PATCH=$((PATCH + 1))
             NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
           done
+
           echo "RELEASE_NAME=release/${NEXT_VERSION}" >> $GITHUB_ENV
           echo "RELEASE_VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
+
+          git checkout main
+          git pull origin main
+          git checkout -b $RELEASE_NAME
+          git push origin $RELEASE_NAME
       
