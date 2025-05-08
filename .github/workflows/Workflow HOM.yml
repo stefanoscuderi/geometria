@@ -34,10 +34,11 @@ jobs:
       - name: Gera próxima versão de release baseada em tag (sem conflitos)
         id: release_name
         run: |
-          git fetch --tags
-          LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "0.0.0")
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$LAST_TAG"
-          PATCH=$((10#$PATCH + 1))
+          git fetch --tags # Faz o fetch das tags remotas
+          # Verifica se há tags disponíveis
+          LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "0.0.0") # Pega a última tag ou define como 0.0.0 se não houver tags
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$LAST_TAG" # Divide a tag em partes (MAJOR.MINOR.PATCH)
+          PATCH=$((10#$PATCH + 1)) # Incrementa a versão PATCH
           NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
           while git ls-remote --exit-code --heads origin "release/${NEXT_VERSION}" > /dev/null 2>&1; do
             PATCH=$((PATCH + 1))
@@ -48,7 +49,7 @@ jobs:
 
       - name: Criar Pull Request para a branch release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Corrija o nome, o padrão é GITHUB_TOKEN
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

@@ -43,10 +43,3 @@ def condicao_existencia_triangulo(ladoA, ladoB, ladoC):
         ]
     )
 
-# TODO Adicionar a fórmula da altura do triangulo
-# TODO Adicionar a fórmula do semiperimetro
-# TODO Adicionar a fórmula do raio do circuncentro
-# TODO Adicionar a fórmula do raio do incentro
-# TODO Adicionar a fórmula do cálculo de angulos internos do trangulo
-# TODO Adicionar a classificação de triangulo (escaleno, isósceles, equilátero)
-
