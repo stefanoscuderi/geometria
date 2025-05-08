@@ -26,7 +26,15 @@ jobs:
       - name: Rodar testes unitários  # Passo para rodar os testes
         run: |  # Executa os comandos abaixo em um shell
           pytest tests/  # Executa os testes unitários com pytest
-
+          
+  Cria-PR-automatico: # Job para criar Pull Request de release
+    runs-on: ubuntu-latest
+    needs: run-tests
+    if: success() # Executa apenas se o job anterior for bem-sucedido
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v3
+      
       - name: Verificar Branch  # Passo para verificar a branch atual
         run: |  # Executa os comandos abaixo em um shell
           echo "Branch atual: ${GITHUB_REF}"  # Mostra a branch atual nos logs
