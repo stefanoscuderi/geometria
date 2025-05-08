@@ -31,12 +31,12 @@ jobs:
         run: |  # Executa os comandos abaixo em um shell
           echo "Branch atual: ${GITHUB_REF}"  # Mostra a branch atual nos logs
 
-      - name: Criar Pull Request (se não existir)
+      - name: Criar Pull Request  # Passo para criar um Pull Request
         if: github.ref != 'refs/heads/develop' # Executa apenas se a branch não for develop
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Token do GitHub para autenticação
         run: | # Verifica se o PR existe, se não existir, cria
-          gh pr list --head ${{ github.ref_name }} --base develop --json number --repo ${{ github.repository }} | jq '.[0].number != null' || (
+          gh pr list --head ${{ github.ref_name }} --base develop --json number --repo ${{ github.repository }} | jq '.[0].number != null' || ( # Verifica se o PR já existe
             echo "Criando novo PR..." &&
             gh pr create --base develop --head ${{ github.ref }} --title "Feature: ${{ github.ref_name }}" --body "$(cat .github/pull_request_template.md)"
           )
