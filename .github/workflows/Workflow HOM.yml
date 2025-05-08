@@ -11,17 +11,14 @@ jobs:
     steps:
       - name: Checkout do repositório # Clona o repositório
         uses: actions/checkout@v3
-
       - name: Configurar o Python # Configura a versão do Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
       - name: Instalar dependências # Instala as dependências do projeto
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
       - name: Rodar testes unitários # Executa os testes
         run: |
           pytest tests/
@@ -38,33 +35,31 @@ jobs:
         id: release_name
         run: |
           git fetch --tags
-
           LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "0.0.0")
           IFS='.' read -r MAJOR MINOR PATCH <<< "$LAST_TAG"
           PATCH=$((10#$PATCH + 1))
           NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
-
           while git ls-remote --exit-code --heads origin "release/${NEXT_VERSION}" > /dev/null 2>&1; do
             PATCH=$((PATCH + 1))
             NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
           done
-
           echo "RELEASE_NAME=release/${NEXT_VERSION}" >> $GITHUB_ENV
           echo "RELEASE_VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
 
       - name: Criar Pull Request para a branch release
-      env: 
-        GITHUBTOKEN: ${{ secrets.GITHUBTOKEN }} 
-      run: | 
-        git config user.name "github-actions[bot]" 
-        git config user.email "github-actions[bot]@users.noreply.github.com" 
-        git checkout develop 
-        git pull origin develop 
-        git checkout -b ${{ env.RELEASENAME }} 
-        git push origin ${{ env.RELEASENAME }}
-        
-        if [[ $(git log origin/main..HEAD --oneline) ]]; then
-          gh pr create --base main --head ${{ env.RELEASE_NAME }} --title "Release ${{ env.RELEASE_VERSION }}" --body "Pull Request para a branch de release ${{ env.RELEASE_VERSION }}"
-        else
-          echo "Nenhum novo commit para PR. Não será criado PR."
-        fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Corrija o nome, o padrão é GITHUB_TOKEN
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout develop
+          git pull origin develop
+          git checkout -b ${{ env.RELEASE_NAME }}
+          git push origin ${{ env.RELEASE_NAME }}
+
+          # Só cria a PR se há diferença entre a branch release e main
+          if [[ $(git log origin/main..HEAD --oneline) ]]; then
+            gh pr create --base main --head ${{ env.RELEASE_NAME }} --title "Release ${{ env.RELEASE_VERSION }}" --body "Pull Request para a branch de release ${{ env.RELEASE_VERSION }}"
+          else
+            echo "Nenhum novo commit para PR. Não será criado PR."
+          fi
