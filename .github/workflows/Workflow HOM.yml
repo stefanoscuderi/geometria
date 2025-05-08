@@ -1,3 +1,6 @@
+- name: Setup Python
+  uses: actions/setup-python@v5.6.0
+
 name: 2 - Workflow para Hom # Nome do workflow para homologação
 
 on:
