@@ -6,7 +6,7 @@ on:
       - 'feature/**'  # O workflow é executado em qualquer branch, exceto a branch protegida
 
 jobs:
-  run-tests:  # Definição do job que vai rodar os testes
+  Meu-job:  # Definição do job que vai rodar os testes
     runs-on: ubuntu-latest  # Define o ambiente para execução (Ubuntu)
 
     steps:
@@ -31,9 +31,12 @@ jobs:
         run: |  # Executa os comandos abaixo em um shell
           echo "Branch atual: ${GITHUB_REF}"  # Mostra a branch atual nos logs
 
-      - name: Criar Pull Request  # Passo para criar uma Pull Request automaticamente
-        if: github.ref != 'refs/heads/develop'  # Executa apenas se a branch não for develop
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr create --base develop --head ${{ github.ref }} --title "Feature: ${{ github.ref_name }}" --body "$(cat .github/pull_request_template.md)"
+      - name: Criar Pull Request (se não existir)
+        if: github.ref != 'refs/heads/develop' # Executa apenas se a branch não for develop
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: | # Verifica se o PR existe, se não existir, cria
+            gh pr list --head ${{ github.ref_name }} --base develop --json number --repo ${{ github.repository }} | jq '.[0].number != null' || (
+              echo "Criando novo PR..." &&
+              gh pr create --base develop --head ${{ github.ref }} --title "Feature: ${{ github.ref_name }}" --body "$(cat .github/pull_request_template.md)"
+            )
